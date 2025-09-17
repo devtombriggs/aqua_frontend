@@ -1,30 +1,25 @@
-import { useEffect, useState } from "react";
+'use client';
 
-type Sensormessage = { id: number; message: string, createdAt: string };
+import { useEffect, useState } from 'react';
 
-export default function get_request() {
-    const [data, setData] = useState<Sensormessage[]>([]);
-    const [loading, setLoading] = useState(true);
+export default function GetRequest() {
+  const [data, setData] = useState<unknown>(null);
+  const [loading, setLoading] = useState(true);
+  const [err, setErr] = useState<Error | null>(null);
 
-    useEffect(() => {
-        fetch('http://localhost:8080/api/messages')
-        .then(res => res.json())
-        .then(setData)
-        .finally(() => setLoading(false));
-    }, []);
+  useEffect(() => {
+    const url = `http://localhost:8080/api/messages`;
+    fetch(url)
+      .then(r => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
+      .then(setData)
+      .catch(setErr)
+      .finally(() => setLoading(false));
+  }, []);
 
-    if (loading) return <p>loading...</p>
-
-    return(
-        <main style={{ padding: 24 }}>
-            <h1>Aquaponics</h1>
-            <ul>
-                {data.map(m => (
-                    <li key={m.id}>
-                        <strong>{m.message}</strong><em>({new Date(m.createdAt).toLocaleString()})</em>
-                    </li>
-                ))}
-            </ul>
-        </main>
-    );
+  if (loading) return <p>Loading…</p>;
+  if (err) return <p>Error: {err.message}</p>;
+  return <pre>{JSON.stringify(data, null, 2)}</pre>;
 }
