@@ -8,7 +8,7 @@ export default function GetRequest() {
   const [err, setErr] = useState<Error | null>(null);
 
   useEffect(() => {
-    const url = `http://localhost:8080/api/messages`;
+    const url = `http://192.168.49.2:30009/api/messages`;
     fetch(url)
       .then(r => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
